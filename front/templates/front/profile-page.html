@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>My Profile</title>
-    <link rel="stylesheet" href="front/templates/static/css/style.css">
+    <link rel="stylesheet" href="">
 </head>
 <body>
 <div class="left-menu">
     <nav>
         <ol>
             <li><a href="{% url 'profile' user.profile %}">My profile</a></li>
-            <li><a href="{% url '' user.profile %}">My messages</a></li>
-            <li><a href="{% url '' user.profile %}">My friends</a></li>
-            <li><a href="{% url '' user.profile %}">My photos</a></li>
+            <li><a href="{% url ''  %}">My messages</a></li>
+            <li><a href="{% url ''  %}">My friends</a></li>
+            <li><a href="{% url ''  %}">My photos</a></li>
         </ol>
     </nav>
 </div>
@@ -49,7 +49,7 @@
                     <img src="" width="100" height="100" alt="" class="rounded-circle post_img">
                 </a>
                 <div class="post_header_info">
-                    <b class="post_author"><a href="{% %}">{{ post.author.name }} {{ post.author.surname }}</a></b>
+                    <b class="post_author"><a href="{% %}"></a></b>
                 </div>
                 <div class="post_date">
                     <span>{{ post.date }}</span>
@@ -68,12 +68,35 @@
                     {{ post.text }}
                 </div>
             </div>
+            <div>
+                <form action="{% url '' post.pk %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="type" value="edit">
+                    <label>
+                        <p>Title</p>
+                    <input type="text" name="title" value="{{post.title}}">
+                        </label>
+                    <label>
+                        <p>Text</p>
+                        <textarea type="text" name="text">{{ post.text }}</textarea>
+                        </label>
+                    <label>
+                        <p>Image</p>
+                        <input type="file" name="img">
+                        </label>
+                    <br>
+                    <br>
+                    <button type="submit">Изменить запись</button>
+                </form>
+               <br>
+                <form action="{% url '' blog.pk %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="type" value="delete">
+                    <button type="submit">Удалить запись</button>
+                </form>
+            </div>
         </div>
     {% endfor %}
-</div>
-</div>
-</div>
-
 </div>
 </body>
 </html>
