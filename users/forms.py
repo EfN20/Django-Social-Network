@@ -1,12 +1,14 @@
 from django import forms
 from django.contrib.auth.models import Group
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.conf import settings
 
 from .models import User
 
 
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
+    date_of_birth = forms.DateField(label='Birthday', initial="01-01-2002", widget=forms.DateInput, input_formats=settings.DATE_INPUT_FORMATS)
     
     class Meta:
         model = User

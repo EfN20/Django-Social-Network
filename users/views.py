@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate. login as auth_login, logout
+from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 
@@ -13,7 +13,7 @@ from .forms import RegistrationForm
 
 
 class RegistrationView(CreateView):
-    template_name = 'templates/register.html'
+    template_name = 'register.html'
     form_class = RegistrationForm
 
     def get_context_data(self, *args, **kwargs):
@@ -31,9 +31,9 @@ class RegistrationView(CreateView):
 
 
 class ProfileView(UpdateView):
-    model = Account
-    fields = ['name', 'tag', 'phone_number', 'date_of_birth', 'picture']
-    template_name = 'templates/profile.html'
+    model = User
+    fields = ['name', 'tag', 'phone_number', 'date_of_birth', 'avatar']
+    template_name = 'profile.html'
 
     def get_success_url(self):
         return reverse('index')
