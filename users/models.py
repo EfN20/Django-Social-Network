@@ -40,9 +40,9 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(_('name'), max_length=50)
     tag = models.CharField(_('tag'), max_length=32, unique=True)
-    phone_number = models.CharField(_('phone number'), max_length=12)
+    phone_number = models.CharField(_('phone number'), max_length=12, unique=True)
     email = models.EmailField(_('email address'), max_length=64, unique=True)
-    avatar = models.TextField(upload_to='media/avatars/', default='media/avatars/default_avatar.png')
+    avatar = models.ImageField(upload_to='media/avatars/', default='media/avatars/default_avatar.png')
     friend_list = models.ManyToManyField('self', symmetrical=False)
     is_staff = models.BooleanField(default=False)
     last_login = models.DateTimeField(null=True)
