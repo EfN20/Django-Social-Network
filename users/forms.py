@@ -4,19 +4,21 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 from .models import User
 
+
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
     
     class Meta:
         model = User
-        fields = ('name', 'tag', 'email', 'avatar', 'phone_number', 'password')
+        fields = ('name', 'tag', 'email', 'date_of_birth', 'avatar', 'phone_number', 'password')
 
     def save(self, commit=True):
-        user =      super().save(commit=False)
+        user = super().save(commit=False)
         user.set_password(self.cleaned_data['password'])
         if commit:
             user.save()
         return user
+
 
 class UserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
@@ -24,7 +26,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('name', 'tag', 'email', 'avatar', 'phone_number', 'password')
+        fields = ('name', 'tag', 'email', 'date_of_birth', 'avatar', 'phone_number', 'is_staff', 'is_superuser')
 
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1')
@@ -39,3 +41,15 @@ class UserCreationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+    
+
+class UserChangeForm(forms.ModelForm):
+    password = ReadOnlyPasswordHashField()
+
+    class Meta:
+        model = User
+        fields = ('name', 'tag', 'email', 'date_of_birth', 'avatar', 'phone_number', 'password', 'is_superuser')
+        
+
+    def clean_password(self):
+        return self.initial['password']
