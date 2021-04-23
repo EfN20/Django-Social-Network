@@ -16,7 +16,7 @@ class UserManager(BaseUserManager):
         
         if not phone_number:
             raise ValueError('The given email must be set')
-        user = self.model(phone_number=phone_number, **extra_fields)
+        user = self.model(name=name, tag=tag, email=email, phone_number=phone_number, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -24,7 +24,7 @@ class UserManager(BaseUserManager):
     def create_user(self, name, tag, email, phone_number, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', False)
         extra_fields.setdefault('is_superuser', False)
-        return self._create_user(phone_number, password, **extra_fields)
+        return self._create_user(name, tag, email, phone_number, password, **extra_fields)
 
     def create_superuser(self, name, tag, email, phone_number, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
@@ -42,7 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     tag = models.CharField(_('tag'), max_length=32, unique=True)
     phone_number = models.CharField(_('phone number'), max_length=12, unique=True)
     email = models.EmailField(_('email address'), max_length=64, unique=True)
-    date_of_birth = models.DateField(_('Birthday'), max_length=10, default='2000-01-01')
+    date_of_birth = models.DateField(_('Birthday'), max_length=10)
     avatar = models.ImageField(upload_to='avatars/', default='avatars/default_avatar.png')
     friend_list = models.ManyToManyField('self', symmetrical=False)
     is_staff = models.BooleanField(default=False)
