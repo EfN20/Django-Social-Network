@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile</title>
+    <link rel="stylesheet" href="">
+</head>
+<body>
+<div class="left-menu">
+    <nav>
+        <ol>
+            <li><a href="{% url 'profile' user.profile %}">My profile</a></li>
+            <li><a href="{% url ''  %}">My messages</a></li>
+            <li><a href="{% url ''  %}">My friends</a></li>
+            <li><a href="{% url ''  %}">My photos</a></li>
+        </ol>
+    </nav>
+</div>
+<div class="inf-bar">
+    <div class="ava-container">
+        <div class="image">
+            <img src="{% user.avatar %}">
+        </div>
+        <div class="edit-photo-btn">
+            <input class="edit-photo" type="button">
+        </div>
+    </div>
+    <div class="inf-container">
+        Birthday: {% user.birthday %} <br>
+        Current city: {% user.city %} <br>
+        Email: {% user.email %} <br>
+        Phone: {% user.phone %} <br>
+    </div>
+    <div class="photos-cont">
+        {% for image in user.pictures.all %}
+            <a href="" class="fancybox" rel="ligthbox">
+                <img src="" width="200px" height="200px" alt="" class="zoom img-fluid">
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="my-posts">
+    <hr>
+    {% for post in posts %}
+        <div class="post">
+            <div class="post_header">
+                <a class="post_image" href="{% url %}">
+                    <img src="" width="100" height="100" alt="" class="rounded-circle post_img">
+                </a>
+                <div class="post_header_info">
+                    <b class="post_author"><a href="{% %}"></a></b>
+                </div>
+                <div class="post_date">
+                    <span>{{ post.date }}</span>
+                </div>
+            </div>
+            <div class="post-content">
+                <hr>
+                {% if post.img %}
+                    <div class="post-img">
+                        <a href="" class="fancybox" rel="ligthbox">
+                            <img src="" alt="" width="600">
+                        </a>
+                    </div>
+                {% endif %}
+                <div class="post-text">
+                    {{ post.text }}
+                </div>
+            </div>
+            <div>
+                <form action="{% url '' post.pk %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="type" value="edit">
+                    <label>
+                        <p>Title</p>
+                    <input type="text" name="title" value="{{post.title}}">
+                        </label>
+                    <label>
+                        <p>Text</p>
+                        <textarea type="text" name="text">{{ post.text }}</textarea>
+                        </label>
+                    <label>
+                        <p>Image</p>
+                        <input type="file" name="img">
+                        </label>
+                    <br>
+                    <br>
+                    <button type="submit">Изменить запись</button>
+                </form>
+               <br>
+                <form action="{% url '' post.pk %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="type" value="delete">
+                    <button type="submit">Удалить запись</button>
+                </form>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+</body>
+</html>

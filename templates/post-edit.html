@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<a href="{% url 'main-page' %}">Na glavnuu</a>
+      <div>
+          <div>
+                <form action="{% url 'post-edit' post.pk %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="type" value="edit">
+                    <label>
+                        <p>Title</p>
+                    <input type="text" name="title" value="{{post.title}}">
+                        </label>
+                    <label>
+                        <p>Text</p>
+                        <textarea type="text" name="text">{{ post.description }}</textarea>
+                        </label>
+                    <label>
+                        <p>Image</p>
+                        <input type="file" name="img">
+                        </label>
+                    <br>
+                    <br>
+                    <button type="submit">Edit post</button>
+                </form>
+               <br>
+                <form action="{% url 'post-edit' post.pk %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="type" value="delete">
+                    <button type="submit">Delete post</button>
+                </form>
+            </div>
+      </div>
+</body>
+</html>

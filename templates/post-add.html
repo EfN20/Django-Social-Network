@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form action="{% url 'post-add' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label>
+            <p>Title</p>
+        <input type="text" name="title">
+            </label>
+        <label>
+            <p>Text</p>
+            <textarea type="text" name="text"></textarea>
+            </label>
+        <br>
+        <label>
+            <p>Image</p>
+            <input type="file" name="img">
+            </label>
+        <br>
+        <br>
+        <button type="submit">Add post</button>
+    </form>
+
+</body>
+</html>
