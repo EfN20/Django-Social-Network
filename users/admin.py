@@ -14,12 +14,16 @@ class UserAdmin(BaseUserAdmin):
     list_display = ('name', 'tag', 'email', 'date_of_birth', 'avatar', 'phone_number', 'is_staff', 'is_superuser')
     list_filter = ('is_superuser',)
 
+    add_fieldsets = (
+        (None, {'fields': ('name', 'tag', 'email', 'date_of_birth', 'avatar', 'phone_number', 'password', 'is_staff', 'is_superuser',)}),
+    )
+
     fieldsets = (
-        (None, {'fields': ('phone_number', 'is_stuff', 'is_superuser', 'password')}),
+        (None, {'fields': ('phone_number', 'is_staff', 'is_superuser', 'password')}),
         ('Personal info', {'fields': ('name', 'tag', 'email', 'date_of_birth', 'avatar')}),
         ('Groups', {'fields': ('groups',)}),
         ('Permissions', {'fields': ('user_permissions',)}),
-    )
+    )   
 
     search_fields = ('phone', 'tag', 'name')
     ordering = ('tag',)
