@@ -19,3 +19,4 @@ docs/build
 dist/
 user
 0*.py
+.vscode/
