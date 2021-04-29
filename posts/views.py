@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from models import *
+from .models import *
 
 def PostAddView(request):
     posts = Post.objects.all()
@@ -11,7 +11,7 @@ def PostAddView(request):
     context = {
         'posts': posts,
     }
-    return render(request, 'templates/post-add.html', context=context)
+    return render(request, 'post-add.html', context=context)
 
 def PostEditView(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
@@ -32,5 +32,4 @@ def PostEditView(request, post_id):
     context={
         'post': post,
     }
-    return render(request,'templates/post-edit.html', context=context)
-
+    return render(request,'post-edit.html', context=context)
