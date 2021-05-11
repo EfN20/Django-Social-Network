@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.models import Group
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.conf import settings
 
@@ -20,6 +20,21 @@ class RegistrationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+class LoginForm(forms.ModelForm):
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = ('phone_number', 'password')
+
+    def clean(self):
+        if self.is_valid():
+            phone_number = self.cleaned_data.get('phone_number')
+            password = self.cleaned_data.get('password')
+            if not authenticate(phone_number=phone_number, password=password):
+                raise forms.ValidationError('Invalid Login')
 
 
 class UserCreationForm(forms.ModelForm):

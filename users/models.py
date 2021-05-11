@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.base_user import BaseUserManager
 
+
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -36,6 +37,7 @@ class UserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser = True.')
 
         return self._create_user(name, tag, email, phone_number, password, **extra_fields)
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(_('name'), max_length=50)
