@@ -1,15 +1,11 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
-from django.contrib.auth.forms import AuthenticationForm
-
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
 from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse
 
 from .models import User
-from .forms import RegistrationForm
+from .forms import RegistrationForm, LoginForm
 
 
 class RegistrationView(CreateView):
@@ -30,13 +26,42 @@ class RegistrationView(CreateView):
         return success_url
 
 
-class ProfileView(UpdateView):
+class UpdateProfile(UpdateView):
     model = User
     fields = ['name', 'tag', 'phone_number', 'date_of_birth', 'avatar']
-    template_name = 'profile.html'
+    template_name = 'edit-profile.html'
 
     def get_success_url(self):
         return reverse('index')
 
     def get_object(self):
         return self.request.user
+
+
+def login_view(request):
+    context = {}
+    user = request.user
+    if user.is_authenticated:
+        return redirect("/")
+    if request.POST:
+        form = LoginForm(request.POST)
+        phone_number = request.POST.get('phone_number')
+        password = request.POST.get('password')
+        print(phone_number, password)
+        user = authenticate(phone_number=phone_number, password=password)
+        if user:
+            login(request, user)
+            messages.success(request, "Logged In")
+            return redirect("/")
+        else:
+            messages.error(request, "please Correct Below Errors")
+    else:
+        form = LoginForm()
+    context['login_form'] = form
+    return render(request, "login.html", context)
+
+
+def logout_view(request):
+    logout(request)
+    messages.success(request, "Logged Out")
+    return redirect("/login")

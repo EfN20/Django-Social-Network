@@ -29,6 +29,7 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'users.User'
 DATE_INPUT_FORMATS = ('%d-%m-%Y','%Y-%m-%d')
+LOGIN_REDIRECT_USER = ""
 
 
 # Application definition

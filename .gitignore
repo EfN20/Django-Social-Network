@@ -1,6 +1,6 @@
 *.pyc
 *~
-__pycache__
+__pycache__/
 .coverage
 sample_config.yaml
 fabfile.py
