@@ -14,6 +14,12 @@ class RegistrationForm(forms.ModelForm):
         model = User
         fields = ('name', 'tag', 'email', 'date_of_birth', 'avatar', 'phone_number', 'password')
 
+    def __init__(self, *args, **kwargs):
+        super(RegistrationForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control my-1'
+            visible.field.widget.attrs['placeholder'] = visible.name
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data['password'])
@@ -28,6 +34,12 @@ class LoginForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('phone_number', 'password')
+
+    def __init__(self, *args, **kwargs):
+        super(LoginForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control my-1'
+            visible.field.widget.attrs['placeholder'] = visible.name
 
     def clean(self):
         if self.is_valid():
@@ -66,7 +78,6 @@ class UserChangeForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('name', 'tag', 'email', 'date_of_birth', 'avatar', 'phone_number', 'password', 'is_superuser')
-        
 
     def clean_password(self):
         return self.initial['password']
