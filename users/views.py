@@ -9,7 +9,7 @@ from .forms import RegistrationForm, LoginForm
 
 
 class RegistrationView(CreateView):
-    template_name = 'register.html'
+    template_name = 'users/register.html'
     form_class = RegistrationForm
 
     def get_context_data(self, *args, **kwargs):
@@ -29,7 +29,7 @@ class RegistrationView(CreateView):
 class UpdateProfile(UpdateView):
     model = User
     fields = ['name', 'tag', 'phone_number', 'date_of_birth', 'avatar']
-    template_name = 'edit-profile.html'
+    template_name = 'users/edit-profile.html'
 
     def get_success_url(self):
         return reverse('index')
@@ -58,7 +58,7 @@ def login_view(request):
     else:
         form = LoginForm()
     context['login_form'] = form
-    return render(request, "login.html", context)
+    return render(request, "users/login.html", context)
 
 
 def logout_view(request):
