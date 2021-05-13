@@ -1,23 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<a href="{% url 'post-add' %}">Add some post</a>
-<br>
-{% for post in posts %}
-{{ post.description }}
+{% extends 'header.html' %}
+
+{% block title %}
+    Main page
+{% endblock %}
+
+{% block content %}
+    <a href="{% url 'post-add' %}">Add some post</a>
     <br>
-{{ post.user }}
-    <br>
-{{ post.date }}
-    <br>
-    <img src="/medias/{{ post.img }}" alt="">
-    <br>
-    <a href="{% url 'post-edit' post.pk %}">Изменить</a>
-    <br>
-{% endfor %}
-</body>
-</html>
+    {% for post in posts %}
+        <p> {{ post.user }} </p>
+        <p> {{ post.description }} </p>
+        <p> {{ post.img }} </p>
+        <p> {{ post.post_date }} </p>
+        <p> <a href="{% url 'post-edit' post.pk %}">Изменить</a> </p>
+    {% endfor %}
+{% endblock %}

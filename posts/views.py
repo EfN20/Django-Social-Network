@@ -1,17 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404
+
 from .models import *
+
 
 def PostAddView(request):
     posts = Post.objects.all()
     if request.method == 'POST':
         title = request.POST['title']
         text = request.POST['text']
-        Post.objects.create(user=request.user,title=title, description=text)
+        Post.objects.create(user=request.user, title=title, description=text)
 
     context = {
         'posts': posts,
     }
-    return render(request, 'post-add.html', context=context)
+    return render(request, 'posts/post-add.html', context=context)
+
 
 def PostEditView(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
@@ -32,4 +35,4 @@ def PostEditView(request, post_id):
     context={
         'post': post,
     }
-    return render(request,'post-edit.html', context=context)
+    return render(request, 'posts/post-edit.html', context=context)
