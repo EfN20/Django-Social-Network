@@ -2,10 +2,12 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic import ListView
 from django.urls import reverse
 
 from .models import User
 from .forms import RegistrationForm, LoginForm
+from posts.models import Post
 
 
 class RegistrationView(CreateView):
@@ -36,6 +38,13 @@ class UpdateProfile(UpdateView):
 
     def get_object(self):
         return self.request.user
+
+
+class IndexView(ListView):
+    template_name = 'index.html'
+    context_object_name = 'posts'
+    queryset = Post.objects.order_by('-post_date')
+
 
 
 def login_view(request):
