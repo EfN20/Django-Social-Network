@@ -22,20 +22,20 @@
             <div  class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                 <ul id="navigation-ul" class="navbar-nav mb-2 mb-md-0">
                     <li class="nav-item mx-2">
-                        <a class="nav-link" aria-current="page">Main page</a>
+                        <a href="/" class="nav-link" aria-current="page">Main page</a>
                     </li>
                     <li class="nav-item mx-2">
-                        <a class="nav-link">Profile page</a>
+                        <a href="/profile" class="nav-link">Profile page</a>
                     </li>
                 </ul>
-                <a th:href="@{/logout}" class="d-flex btn btn-outline-success mx-2">
+                <a href="/logout" class="d-flex btn btn-outline-success mx-2">
                     Logout
                 </a>
             </div>
         </div>
     </nav>
 </div>
-<main class="container">
+<main class="container mx-auto">
     {% block content %}
     {% endblock %}
 </main>

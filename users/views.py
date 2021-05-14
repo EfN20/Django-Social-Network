@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic.edit import CreateView, UpdateView
-from django.views.generic import ListView
+from django.views.generic import ListView, TemplateView
 from django.urls import reverse
 
 from .models import User
@@ -46,7 +46,6 @@ class IndexView(ListView):
     queryset = Post.objects.order_by('-post_date')
 
 
-
 def login_view(request):
     context = {}
     user = request.user
@@ -74,3 +73,7 @@ def logout_view(request):
     logout(request)
     messages.success(request, "Logged Out")
     return redirect("/login")
+
+
+class ProfileView(TemplateView):
+    template_name = "users/profile-page.html"
