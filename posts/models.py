@@ -11,3 +11,7 @@ class Post(models.Model):
     post_date = models.DateTimeField(default=datetime.now())
     img = models.ImageField(upload_to='posts/', blank=True)
     medias = models.ManyToManyField('medias.Media')
+
+    def delete(self, using=None, keep_parents=False):
+        self.img.delete()
+        super().delete()

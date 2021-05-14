@@ -30,7 +30,14 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 
-admin.site.register(User, UserAdmin)
-admin.site.register(Media)
-admin.site.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display = ('id', 'description', 'user_tag', 'post_date', 'img')
 
+    def user_tag(self, obj):
+        return f"{obj.user.name} ({obj.user.tag})"
+    user_tag.short_description = 'User'
+
+
+admin.site.register(User, UserAdmin)
+admin.site.register(Post, PostAdmin)
+admin.site.register(Media)

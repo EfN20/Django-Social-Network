@@ -9,7 +9,9 @@
         <form action="{% url 'post-add' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-floating">
-                <textarea class="form-control" placeholder="Description here" id="{{ post_form.description.auto_id }}"
+                <textarea class="form-control" placeholder="Description here"
+                          id="{{ post_form.description.auto_id }}"
+                          name="{{ post_form.description.name }}"
                           style="height: 20vh"></textarea>
                 <label for="floatingTextarea2">Description</label>
             </div>
