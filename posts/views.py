@@ -2,11 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import PostForm
 from .models import Post
-from users.models import User
 
 
 def post_add(request):
-    context = {}
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES or None)
         if form.is_valid():
@@ -14,11 +12,6 @@ def post_add(request):
             post.user = request.user
             post.save()
             return redirect("/")
-
-    else:
-        form = PostForm()
-    context['post_form'] = form
-    return render(request, 'posts/post-add.html', context)
 
 
 def post_edit(request, post_id):
