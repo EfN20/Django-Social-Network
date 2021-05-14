@@ -27,7 +27,7 @@ def post_edit(request, post_id):
             return redirect('post-edit', post_id)
         if action == 'delete':
             post.delete()
-            return redirect('main-page')
+            return redirect('/')
     context = {
         'post': post,
     }
