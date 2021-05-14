@@ -1,38 +1,41 @@
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .models import *
+from .forms import PostForm
+from .models import Post
+from users.models import User
 
 
-def PostAddView(request):
-    posts = Post.objects.all()
+def post_add(request):
+    context = {}
     if request.method == 'POST':
-        title = request.POST['title']
-        text = request.POST['text']
-        Post.objects.create(user=request.user, title=title, description=text)
+        form = PostForm(request.POST, request.FILES or None)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
+            return redirect("/")
 
-    context = {
-        'posts': posts,
-    }
-    return render(request, 'posts/post-add.html', context=context)
+    else:
+        form = PostForm()
+    context['post_form'] = form
+    return render(request, 'posts/post-add.html', context)
 
 
-def PostEditView(request, post_id):
+def post_edit(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     if request.method == 'POST':
-        type = request.POST['type']
-        if type == 'edit':
-            new_title = request.POST['title']
-            new_text = request.POST['text']
+        action = request.POST['action']
+        if action == 'edit':
+            new_description = request.POST['description']
             new_img = request.FILES.get('img')
-            post.title = new_title
-            post.description = new_text
+            post.description = new_description
             post.img = new_img
             post.save()
             return redirect('post-edit', post_id)
-        if type == 'delete':
+        if action == 'delete':
             post.delete()
             return redirect('main-page')
-    context={
+    context = {
         'post': post,
     }
     return render(request, 'posts/post-edit.html', context=context)

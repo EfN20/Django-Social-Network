@@ -5,13 +5,18 @@
 {% endblock %}
 
 {% block content %}
-    <a href="{% url 'post-add' %}">Add some post</a>
-    <br>
-    {% for post in posts %}
-        <p> {{ post.user }} </p>
-        <p> {{ post.description }} </p>
-        <p> {{ post.img }} </p>
-        <p> {{ post.post_date }} </p>
-        <p> <a href="{% url 'post-edit' post.pk %}">Изменить</a> </p>
-    {% endfor %}
+    <div class="w-75 mx-auto mt-2">
+        <a href="{% url 'post-add' %}">Add some post</a>
+        {% for post in posts %}
+            <div class="border border-dark px-3 py-1 mt-2">
+                <p> {{ post.user }} </p>
+                <p> {{ post.description }} </p>
+                {% if post.img %}
+                    <p><img style="width: 60%; height: 60%;" src="{{ post.img.url }}" alt="not found" /></p>
+                {% endif %}
+                <p> {{ post.post_date }} </p>
+                <p><a href="{% url 'post-edit' post.pk %}">Изменить</a></p>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}
