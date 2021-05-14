@@ -58,3 +58,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
+
+    def delete(self, using=None, keep_parents=False):
+        self.avatar.delete()
+        super().delete()
+
+
+class FriendRequest(models.Model):
+    user_from = models.ForeignKey(User, related_name='user_from', on_delete=models.CASCADE)
+    user_to = models.ForeignKey(User, related_name='user_to', on_delete=models.CASCADE)

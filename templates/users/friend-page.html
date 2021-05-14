@@ -1,0 +1,62 @@
+{% extends 'header.html' %}
+
+{% block title %}
+    Friend page
+{% endblock %}
+
+{% block content %}
+    <div class="w-50 mx-auto my-2 mt-2">
+        <div>
+            <h2>Request: </h2>
+            {% for request in requests %}
+                <div>
+                    <div class="card mb-3" style="max-width: 540px;">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img style="width: 100%; height: 100%;" src="{{ request.user_from.avatar.url }}"
+                                     alt="not found">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ request.user_from.name }}
+                                        ({{ request.user_from.tag }})</h5>
+                                    <p class="card-text"><small
+                                            class="text-muted">{{ request.user_from.last_login }}</small></p>
+                                    <p class="card-text"><a href="/friends/accept/{{ request.user_from.id }}">Accept
+                                        request</a></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div>
+            {% if not friends %}
+                <h1>You have no friends :(</h1>
+            {% endif %}
+            {% if friends %}
+                <h2>Friends: </h2>
+                {% for friend in friends %}
+                    <div>
+                        <div class="card mb-3" style="max-width: 540px;">
+                            <div class="row g-0">
+                                <div class="col-md-4">
+                                    <img style="width: 100%; height: 100%;" src="{{ friend.avatar.url }}"
+                                         alt="not found">
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ friend.name }} ({{ friend.tag }})</h5>
+                                        <p class="card-text"><small class="text-muted">{{ friend.last_login }}</small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
