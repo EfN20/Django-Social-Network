@@ -8,7 +8,10 @@ from .models import User
 
 class RegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
-    date_of_birth = forms.DateField(label='Birthday', initial="01-01-2002", widget=forms.DateInput, input_formats=settings.DATE_INPUT_FORMATS)
+    date_of_birth = forms.DateField(label='Birthday',
+                                    initial="01-01-2002",
+                                    widget=forms.DateInput,
+                                    input_formats=settings.DATE_INPUT_FORMATS)
     
     class Meta:
         model = User
@@ -55,7 +58,8 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('name', 'tag', 'email', 'date_of_birth', 'avatar', 'phone_number', 'is_staff', 'is_superuser')
+        fields = ('name', 'tag', 'email', 'date_of_birth',
+                  'avatar', 'phone_number', 'is_staff', 'is_superuser')
 
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1')
@@ -77,7 +81,8 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('name', 'tag', 'email', 'date_of_birth', 'avatar', 'phone_number', 'password', 'is_superuser')
+        fields = ('name', 'tag', 'email', 'date_of_birth',
+                  'avatar', 'phone_number', 'password', 'is_superuser')
 
     def clean_password(self):
         return self.initial['password']
