@@ -8,6 +8,7 @@ from django.urls import reverse
 from .models import User
 from .forms import RegistrationForm, LoginForm
 from posts.models import Post
+from posts.forms import PostForm
 
 
 class RegistrationView(CreateView):
@@ -44,6 +45,12 @@ class IndexView(ListView):
     template_name = 'index.html'
     context_object_name = 'posts'
     queryset = Post.objects.order_by('-post_date')
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(IndexView, self).get_context_data(*args, **kwargs)
+        form = PostForm()
+        context['post_form'] = form
+        return context
 
 
 def login_view(request):

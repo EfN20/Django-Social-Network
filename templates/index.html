@@ -6,17 +6,45 @@
 
 {% block content %}
     <div class="w-75 mx-auto mt-2">
-        <a href="{% url 'post-add' %}">Add some post</a>
+        <form action="{% url 'post-add' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-floating">
+                <textarea class="form-control" placeholder="Description here" id="{{ post_form.description.auto_id }}"
+                          style="height: 20vh"></textarea>
+                <label for="floatingTextarea2">Description</label>
+            </div>
+            <br>
+            <label>
+                <p>Image</p>
+                {{ post_form.img }}
+            </label>
+            <br>
+            <br>
+            <button type="submit">Add post</button>
+        </form>
         {% for post in posts %}
-            <div class="border border-dark px-3 py-1 mt-2">
+            <div class="card px-3 py-1 mt-2">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.user.name }} ({{ post.user.tag }})</h5>
+                    <p class="card-text">{{ post.description }}</p>
+                    <p class="card-text"><small class="text-muted">{{ post.post_date }}</small></p>
+                </div>
+                {% if post.img %}
+                    <img style="width: 80%; height: 70vh;" src="{{ post.img.url }}" class="card-img-bottom"
+                         alt="not found">
+                {% endif %}
+                <a href="{% url 'post-edit' post.pk %}">Изменить</a>
+            </div>
+
+            {% comment %}<div class="border border-dark px-3 py-1 mt-2">
                 <p> {{ post.user }} </p>
                 <p> {{ post.description }} </p>
                 {% if post.img %}
-                    <p><img style="width: 60%; height: 60%;" src="{{ post.img.url }}" alt="not found" /></p>
+                    <p><img style="width: 60%; height: 60%;" src="{{ post.img.url }}" alt="not found"/></p>
                 {% endif %}
                 <p> {{ post.post_date }} </p>
                 <p><a href="{% url 'post-edit' post.pk %}">Изменить</a></p>
-            </div>
+            </div>{% endcomment %}
         {% endfor %}
     </div>
 {% endblock %}
