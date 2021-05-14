@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from medias.models import Media
 from posts.models import Post
-from .models import User
+from .models import User, FriendRequest
 from .forms import UserCreationForm, UserChangeForm
 
 
@@ -20,7 +20,7 @@ class UserAdmin(BaseUserAdmin):
 
     fieldsets = (
         (None, {'fields': ('phone_number', 'is_staff', 'is_superuser', 'password')}),
-        ('Personal info', {'fields': ('name', 'tag', 'email', 'date_of_birth', 'avatar')}),
+        ('Personal info', {'fields': ('name', 'tag', 'email', 'date_of_birth', 'avatar', 'friend_list')}),
         ('Groups', {'fields': ('groups',)}),
         ('Permissions', {'fields': ('user_permissions',)}),
     )   
@@ -30,14 +30,10 @@ class UserAdmin(BaseUserAdmin):
     filter_horizontal = ()
 
 
-class PostAdmin(admin.ModelAdmin):
-    list_display = ('id', 'description', 'user_tag', 'post_date', 'img')
-
-    def user_tag(self, obj):
-        return f"{obj.user.name} ({obj.user.tag})"
-    user_tag.short_description = 'User'
+class FriendRequestAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user_from', 'user_to')
 
 
 admin.site.register(User, UserAdmin)
-admin.site.register(Post, PostAdmin)
+admin.site.register(FriendRequest, FriendRequestAdmin)
 admin.site.register(Media)

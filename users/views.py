@@ -1,11 +1,12 @@
 from django.contrib import messages
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import ListView, TemplateView
 from django.urls import reverse
 
-from .models import User
+from .models import User, FriendRequest
 from .forms import RegistrationForm, LoginForm
 from posts.models import Post
 from posts.forms import PostForm
@@ -22,7 +23,7 @@ class RegistrationView(CreateView):
 
     def get_success_url(self):
         next_url = self.request.POST.get('next')
-        success_url = reverse('login')
+        success_url = reverse('login/')
         if next_url:
             success_url += '?next={}'.format(next_url)
 
@@ -84,3 +85,33 @@ def logout_view(request):
 
 class ProfileView(TemplateView):
     template_name = "users/profile-page.html"
+
+
+def send_friend_request(request, user_to):
+    user_from = request.user
+    user_to = User.objects.get(id=user_to)
+    friend_request, created = FriendRequest.objects.get_or_create(user_from=user_from, user_to=user_to)
+    if created:
+        return HttpResponse('Friend request sent')
+    else:
+        return HttpResponse('Request was already sent')
+
+
+def accept_friend_request(request, request_id):
+    friend_request = FriendRequest.objects.get(id=request_id)
+    if friend_request.user_to == request.user:
+        friend_request.user_to.friend_list.add(friend_request.user_from)
+        friend_request.user_from.friend_list.add(friend_request.user_to)
+        friend_request.delete()
+        return HttpResponse('Friend request accepted')
+
+
+class FriendsView(ListView):
+    template_name = 'users/friend-page.html'
+    model = User
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(FriendsView, self).get_context_data(*args, **kwargs)
+        context['friends'] = self.request.user.friend_list.all()
+        context['requests'] = FriendRequest.objects.filter(user_to=self.request.user)
+        return context
