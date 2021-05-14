@@ -1,3 +1,48 @@
+{% extends 'header.html' %}
+
+{% block title %}
+    Profile page
+{% endblock %}
+
+{% block content %}
+    <table class="table table-hover w-50 mx-auto">
+        <tbody>
+        <tr>
+            <td>Avatar</td>
+            <td><img src="{{ user.avatar.url }}" width="100" height="100"/></td>
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td>{{ user.name }}</td>
+        </tr>
+        <tr>
+            <td>Tag</td>
+            <td>{{ user.tag }}</td>
+        </tr>
+        <tr>
+            <td>Phone number</td>
+            <td>{{ user.phone_number }}</td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td>{{ user.email }}</td>
+        </tr>
+        <tr>
+            <td>Birthday</td>
+            <td>{{ user.date_of_birth }}</td>
+        </tr>
+        <tr>
+            <td><a href="/edit">Edit profile</a></td>
+        </tr>
+        </tbody>
+    </table>
+
+{% endblock %}
+
+
+
+
+{% comment %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -99,4 +144,4 @@
     {% endfor %}
 </div>
 </body>
-</html>
+</html>{% endcomment %}
