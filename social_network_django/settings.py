@@ -31,6 +31,7 @@ AUTH_USER_MODEL = 'users.User'
 DATE_INPUT_FORMATS = ('%d-%m-%Y', '%Y-%m-%d')
 LOGIN_REDIRECT_USER = ""
 LOGOUT_REDIRECT_URL = "users:login"
+LOGIN_URL = "users:login"
 
 
 # Application definition
@@ -44,7 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'posts',
     'users',
-    'medias'
+    'medias',
+    'channels',
+    'chat'
 ]
 
 MIDDLEWARE = [
@@ -77,6 +80,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'social_network_django.wsgi.application'
 
+# Channels
+ASGI_APPLICATION = 'social_network_django.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases

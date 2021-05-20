@@ -1,0 +1,79 @@
+{% extends 'header.html' %}
+
+{% block title %}
+    Friend page
+{% endblock %}
+
+{% block content %}
+    <div class="w-75 h-100 mx-auto">
+        <div class="border border-dark" style="height: 50vh;" id="chat-log">
+            {% for message in messages %}
+                <div class="d-flex flex-row p-2">
+                    <img class="me-2 rounded-circle" style="width: 100px; height: 100px;"
+                         src="{{ message.user.avatar.url }}">
+                    <div class="d-flex flex-column ms-2">
+                        <h5>{{ message.user.name }} ({{ message.user.tag }})</h5>
+                        <p>{{ message.text }}</p>
+                    </div>
+                    <span class="ms-auto">{{ message.date|date:"d-m-Y G:i:s" }}</span>
+                </div>
+            {% endfor %}
+        </div>
+        <input id="chat-message-input" type="text" size="100"><br>
+        <input id="chat-message-submit" type="button" value="Send">
+        {{ room_id|json_script:"room_id" }}
+    </div>
+    <script>
+        const room_id = JSON.parse(document.getElementById('room_id').textContent);
+
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/chat/'
+            + room_id
+            + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            const msg = `<div class="d-flex flex-row">
+                                <img src="` + data.avatar + `">
+                                <p>` + data.message + `</p>
+                                <span>` + data.date + `</span>
+                         </div>`;
+            let new_msg = document.createElement('div');
+            new_msg.className = "d-flex flex-row p-2"
+            new_msg.innerHTML = `<img class="me-2 rounded-circle" src="` + data.avatar + `" style="width: 100px; height: 100px;">
+                                <div class="d-flex flex-column ms-2">
+                                    <h5>` + data.user + `</h5>
+                                    <p>` + data.message + `</p>
+                                </div>
+                                <span class="ms-auto">` + data.date + `</span>`
+            document.querySelector('#chat-log').appendChild(new_msg);
+            console.log(data.user)
+            console.log(data.avatar)
+            console.log(data.date)
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'room_id': room_id
+            }));
+            messageInputDom.value = '';
+        };
+    </script>
+{% endblock %}

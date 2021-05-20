@@ -1,0 +1,43 @@
+{% extends 'header.html' %}
+
+{% block title %}
+    Friend page
+{% endblock %}
+
+{% block content %}
+    <div class="w-75 mx-auto">
+        What chat room would you like to enter?<br>
+        <input id="room-name-input" type="text" size="100"><br>
+        <input id="room-name-submit" type="button" value="Enter">
+
+        <div class="d-flex flex-column">
+            {% for room in rooms %}
+                <div class="d-flex flex-column">
+                    {% if room.type == False %}
+                        {% for member in room.members.all %}
+                            {% if member != user %}
+                                <p>{{ member.name }} ({{ member.tag }})</p>
+                            {% endif %}
+                        {% endfor %}
+                        {% else %}
+                            <p>{{ room.name }}</p>
+                    {% endif %}
+                    <a href="{% url 'single-chat-id' room_id=room.id %}">Go to chat room</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <script>
+        document.querySelector('#room-name-input').focus();
+        document.querySelector('#room-name-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter button
+                document.querySelector('#room-name-submit').click();
+            }
+        };
+
+        document.querySelector('#room-name-submit').onclick = function(e) {
+            let roomName = document.querySelector('#room-name-input').value;
+            window.location.pathname = '/chat/' + roomName + '/';
+        };
+    </script>
+{% endblock %}

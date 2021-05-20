@@ -30,7 +30,7 @@
             <button class="w-100 btn btn-lg btn-success my-1" type="submit">Sign up</button>
         </form>
     {% endblock %}
-    <form action="/login">
+    <form action="{% url 'users:login' %}">
         <button class="w-100 btn btn-lg btn-success my-1" type="submit">Sign in</button>
     </form>
 </div>

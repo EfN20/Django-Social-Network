@@ -2,6 +2,8 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import ListView, TemplateView
 from django.urls import reverse
@@ -10,6 +12,7 @@ from .models import User, FriendRequest
 from .forms import RegistrationForm, LoginForm
 from posts.models import Post
 from posts.forms import PostForm
+from chat.models import Room
 
 
 class RegistrationView(CreateView):
@@ -30,7 +33,7 @@ class RegistrationView(CreateView):
         return success_url
 
 
-class UpdateProfile(UpdateView):
+class UpdateProfile(LoginRequiredMixin, UpdateView):
     model = User
     fields = ['name', 'tag', 'phone_number', 'date_of_birth', 'avatar']
     template_name = 'users/edit-profile.html'
@@ -83,13 +86,18 @@ def logout_view(request):
     return redirect("/login")
 
 
-class ProfileView(TemplateView):
+class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = "users/profile-page.html"
 
 
+@login_required
 def send_friend_request(request, user_to):
     user_from = request.user
     user_to = User.objects.get(id=user_to)
+    if user_from == user_to:
+        return HttpResponse('Cannot send request to yourself :)')
+    if user_from in user_to.friend_list.all():
+        return HttpResponse('Already in friend list')
     friend_request, created = FriendRequest.objects.get_or_create(user_from=user_from, user_to=user_to)
     if created:
         return HttpResponse('Friend request sent')
@@ -97,6 +105,7 @@ def send_friend_request(request, user_to):
         return HttpResponse('Request was already sent')
 
 
+@login_required
 def accept_friend_request(request, request_id):
     friend_request = FriendRequest.objects.get(id=request_id)
     if friend_request.user_to == request.user:
@@ -106,7 +115,7 @@ def accept_friend_request(request, request_id):
         return HttpResponse('Friend request accepted')
 
 
-class FriendsView(ListView):
+class FriendsView(LoginRequiredMixin, ListView):
     template_name = 'users/friend-page.html'
     model = User
 
@@ -114,4 +123,5 @@ class FriendsView(ListView):
         context = super(FriendsView, self).get_context_data(*args, **kwargs)
         context['friends'] = self.request.user.friend_list.all()
         context['requests'] = FriendRequest.objects.filter(user_to=self.request.user)
+        context['rooms'] = Room.objects.filter(members=self.request.user, type=False)
         return context

@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from medias.models import Media
-from posts.models import Post
 from .models import User, FriendRequest
 from .forms import UserCreationForm, UserChangeForm
 
