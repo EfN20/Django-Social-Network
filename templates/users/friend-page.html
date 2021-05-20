@@ -22,8 +22,9 @@
                                         ({{ request.user_from.tag }})</h5>
                                     <p class="card-text"><small
                                             class="text-muted">{{ request.user_from.last_login }}</small></p>
-                                    <p class="card-text"><a href="/friends/accept/{{ request.user_from.id }}">Accept
-                                        request</a></p>
+                                    <p class="card-text">
+                                        <a href="/friends/accept/{{ request.id }}">Accept request</a>
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -48,8 +49,17 @@
                                 <div class="col-md-8">
                                     <div class="card-body">
                                         <h5 class="card-title">{{ friend.name }} ({{ friend.tag }})</h5>
-                                        <p class="card-text"><small class="text-muted">{{ friend.last_login }}</small>
+                                        <p class="card-text">
+                                            <small class="text-muted">{{ friend.last_login }}</small>
                                         </p>
+                                        {% if friend.id > user.id %}
+{#                                            <a href="{% url 'private_chat'  %}">Send message</a>#}
+                                            <a href="../chat/private/{{ user.id }}_{{ friend.id }}/">Send message</a>
+                                        {% else %}
+                                            <a href="../chat/private/{{ friend.id }}_{{ user.id }}/">Send message</a>
+                                        {% endif %}
+
+{#                                        <a href="../chat/{{ user.id }}_{{ friend.id }}/">Send message</a>#}
                                     </div>
                                 </div>
                             </div>
