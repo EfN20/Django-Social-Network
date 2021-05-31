@@ -8,7 +8,7 @@ class RoomAdmin(admin.ModelAdmin):
 
 
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'room_name_id', 'text', 'date')
+    list_display = ('id', 'user', 'room_name_id', 'text', 'image', 'date')
 
     def room_name_id(self, obj):
         return f"{obj.room.name} ({obj.room.id})"

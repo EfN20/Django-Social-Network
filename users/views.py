@@ -45,10 +45,16 @@ class UpdateProfile(LoginRequiredMixin, UpdateView):
         return self.request.user
 
 
-class IndexView(ListView):
+class IndexView(LoginRequiredMixin, ListView):
     template_name = 'index.html'
     context_object_name = 'posts'
-    queryset = Post.objects.order_by('-post_date')
+
+    def get_queryset(self):
+        posts = Post.objects.filter(user__in=self.request.user.friend_list.all())
+        my_posts = Post.objects.filter(user=self.request.user)
+        posts |= my_posts
+        posts = posts.order_by('-post_date')
+        return posts
 
     def get_context_data(self, *args, **kwargs):
         context = super(IndexView, self).get_context_data(*args, **kwargs)

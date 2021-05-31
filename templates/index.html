@@ -6,7 +6,10 @@
 
 {% block content %}
     <div class="w-75 mx-auto mt-2">
-        <form action="{% url 'post-add' %}" method="post" enctype="multipart/form-data">
+        <form class="border border-dark rounded-3 p-3"
+              action="{% url 'post-add' %}"
+              method="post"
+              enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-floating">
                 <textarea class="form-control" placeholder="Description here"
@@ -17,25 +20,36 @@
             </div>
             <br>
             <label>
-                <p>Image</p>
-                {{ post_form.img }}
+                <input class="form-control-file" type="file"
+                       id="{{ post_form.img.auto_id }}"
+                       name="{{ post_form.img.name }}"
+                       accept="image/*"
+                       placeholder="Upload image">
+{#                {{ post_form.img }}#}
             </label>
             <br>
             <br>
-            <button type="submit">Add post</button>
+            <button class="btn btn-outline-dark" type="submit">Add post</button>
         </form>
         {% for post in posts %}
-            <div class="card px-3 py-1 mt-2">
+            <div class="card px-3 py-1 pb-3 mt-2">
                 <div class="card-body">
-                    <h5 class="card-title">{{ post.user.name }} ({{ post.user.tag }})</h5>
+                    <div class="d-flex flex-row">
+                        <img class="rounded-circle" style="width: 6rem; height: 6rem;" src="{{ post.user.avatar.url }}" alt="Not found...">
+                        <div class="d-flex flex-column ms-3 mt-2">
+                            <h5 class="card-title">{{ post.user.name }} ({{ post.user.tag }})</h5>
+                            <p class="card-text"><small class="text-muted">{{ post.post_date }}</small></p>
+                        </div>
+                        <a class="ms-auto" href="{% url 'post-edit' post.pk %}">Изменить</a>
+                    </div>
                     <p class="card-text">{{ post.description }}</p>
-                    <p class="card-text"><small class="text-muted">{{ post.post_date }}</small></p>
                 </div>
                 {% if post.img %}
-                    <img style="width: 80%; height: 70vh;" src="{{ post.img.url }}" class="card-img-bottom"
-                         alt="not found">
+                    <img class="card-img-bottom mx-auto"
+                         style="width: 80%; height: 70vh;"
+                         src="{{ post.img.url }}"
+                         alt="Not found">
                 {% endif %}
-                <a href="{% url 'post-edit' post.pk %}">Изменить</a>
             </div>
 
             {% comment %}<div class="border border-dark px-3 py-1 mt-2">
