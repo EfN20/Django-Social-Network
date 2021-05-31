@@ -6,14 +6,17 @@
 
 {% block content %}
     <div class="w-75 h-100 mx-auto mt-2">
-        <div class="border border-dark overflow-auto my-1" style="height: 50vh;" id="chat-log">
+        <div class="border border-dark overflow-auto my-1" style="height: 70vh;" id="chat-log">
             {% for message in messages %}
                 <div class="d-flex flex-row p-2">
-                    <img class="me-2 rounded-circle" style="width: 100px; height: 100px;"
+                    <img class="me-2 rounded-circle" style="width: 6rem; height: 6rem;"
                          src="{{ message.user.avatar.url }}">
-                    <div class="d-flex flex-column ms-2">
+                    <div class="d-flex flex-column ms-2 w-75">
                         <h5>{{ message.user.name }} ({{ message.user.tag }})</h5>
                         <p>{{ message.text }}</p>
+                        {% if message.image %}
+                            <img style="width: 30%; height: 40vh;" src="{{ message.image.url }}">
+                        {% endif %}
                     </div>
                     <span class="ms-auto">{{ message.date|date:"d-m-Y G:i:s" }}</span>
                 </div>
@@ -22,6 +25,10 @@
         <div class="d-flex flex-row justify-content-between">
             <input id="chat-message-input" class="w-100 me-3 my-1 p-2" type="text" size="100"><br>
             <input id="chat-message-submit" class="btn btn-outline-dark my-1" type="button" value="Send">
+        </div>
+        <div>
+            <input id="chat-message-file" type="file"><br>
+            <input id="chat-message-file-send" type="button" value="Send file"><br>
         </div>
         {{ room_id|json_script:"room_id" }}
     </div>
@@ -45,23 +52,24 @@
                          </div>`;
             let new_msg = document.createElement('div');
             new_msg.className = "d-flex flex-row p-2"
-            new_msg.innerHTML = `<img class="me-2 rounded-circle" src="` + data.avatar + `" style="width: 100px; height: 100px;">
-                                <div class="d-flex flex-column ms-2">
-                                    <h5>` + data.user + `</h5>
-                                    <p>` + data.message + `</p>
-                                </div>
-                                <span class="ms-auto">` + data.date + `</span>`
-            document.querySelector('#chat-log').appendChild(new_msg);
-            console.log(data.user)
-            console.log(data.avatar)
-            console.log(data.date)
+            new_msg.innerHTML = `<img class="me-2 rounded-circle" src="` + data.avatar + `" style="width: 6rem; height: 6rem;">
+                            <div class="d-flex flex-column ms-2 w-75">
+                                <h5>` + data.user + `</h5>
+                                <p>` + data.message + `<br>
+                                    <img style="width: 30%; height: 40vh;" src="` + data.image + `">
+                                </p>
+                            </div>
+                            <span class="ms-auto">` + data.date + `</span>`;
+            document.querySelector('#chat-log').append(new_msg);
         };
 
         chatSocket.onclose = function(e) {
             console.error('Chat socket closed unexpectedly');
         };
 
-        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').addEventListener('focus', (event) => {
+            event.target
+        });
         document.querySelector('#chat-message-input').onkeyup = function(e) {
             if (e.keyCode === 13) {  // enter, return
                 document.querySelector('#chat-message-submit').click();
@@ -72,10 +80,21 @@
             const messageInputDom = document.querySelector('#chat-message-input');
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
-                'message': message,
+                'message': message, 
                 'room_id': room_id
             }));
             messageInputDom.value = '';
         };
+
+        document.querySelector('#chat-message-file-send').onclick = (e) => {
+            let file = document.getElementById('chat-message-file').files[0];
+            console.log(file);
+            let file_ext = file.name.split('.')[1];
+            console.log(file_ext);
+            {#let formData = new FormData();#}
+            {#formData.append('file', file)#}
+            {#formData.append('file_ext', file_ext)#}
+            chatSocket.send(file)
+        }
     </script>
 {% endblock %}

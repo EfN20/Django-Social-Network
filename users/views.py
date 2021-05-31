@@ -45,7 +45,7 @@ class UpdateProfile(LoginRequiredMixin, UpdateView):
         return self.request.user
 
 
-class IndexView(ListView):
+class IndexView(LoginRequiredMixin, ListView):
     template_name = 'index.html'
     context_object_name = 'posts'
 
