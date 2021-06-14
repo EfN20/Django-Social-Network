@@ -1,18 +1,22 @@
+from datetime import datetime
+
 from django.contrib import messages
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import CreateView, UpdateView
-from django.views.generic import ListView, TemplateView
+from django.contrib.auth.signals import user_logged_in, user_logged_out
+from django.dispatch import receiver
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.views.generic import ListView, TemplateView
+from django.views.generic.edit import CreateView, UpdateView
 
-from .models import User, FriendRequest
-from .forms import RegistrationForm, LoginForm
-from posts.models import Post
-from posts.forms import PostForm
 from chat.models import Room
+from posts.forms import PostForm
+from posts.models import Post
+from .forms import RegistrationForm, LoginForm
+from .models import User, FriendRequest
 
 
 class RegistrationView(CreateView):
@@ -131,3 +135,16 @@ class FriendsView(LoginRequiredMixin, ListView):
         context['requests'] = FriendRequest.objects.filter(user_to=self.request.user)
         context['rooms'] = Room.objects.filter(members=self.request.user, type=False)
         return context
+
+
+@receiver(user_logged_in)
+def got_online(sender, user, request, **kwargs):
+    user.is_online = True
+    user.last_login = datetime.now()
+    user.save()
+
+
+@receiver(user_logged_out)
+def got_offline(sender, user, request, **kwargs):
+    user.is_online = False
+    user.save()
