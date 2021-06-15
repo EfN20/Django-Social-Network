@@ -5,7 +5,84 @@
 {% endblock %}
 
 {% block content %}
-    <div class="w-75 mx-auto mt-2">
+    <div id="create-story-div"
+         style="display:none; position: fixed; width: 75vw; height: 100vh; z-index: 101; background-color: white;">
+        <form class="w-50 mx-auto my-auto border border-dark p-3 rounded-3"
+              action="{% url 'media-add' %}"
+              method="post"
+              enctype="multipart/form-data" style="position: relative; height: 55vh;">
+            {% csrf_token %}
+            {{ story_form.as_p }}
+            <button class="btn btn-outline-dark" type="submit">Add story</button>
+            <button class="btn btn-outline-dark" type="button" id="close">Cancel</button>
+        </form>
+    </div>
+
+    {% for friend in friends_list %}
+        <div id="{{ friend.id }}" class="me-5"
+             style="display:none; position: fixed; width: 80vw; height: 100vh; z-index: 101; background-color: white;">
+            <div id="carouselExampleControls"
+                 class="carousel slide mx-auto my-auto border border-dark p-3 rounded-3 bg-secondary"
+                 style="height: 80vh; width: 40vw;"
+                 data-bs-ride="carousel" data-bs-interval="false">
+                <div class="d-flex flex-row justify-content-around my-2">
+                    <h4>{{ friend.name }} ({{ friend.tag }})</h4>
+                    <button type="button" class="btn btn-outline-dark"
+                            onclick="storyClose({{ friend.id }})">Close</button>
+                </div>
+                <div class="carousel-inner w-75" style="margin-left: 4.5rem; height: 75vh;">
+                    {% for story in friends_stories %}
+                        {% if story.user == friend %}
+                            {% if forloop.first %}
+                                <div class="carousel-item active">
+                            {% else %}
+                                <div class="carousel-item">
+                            {% endif %}
+                            {% if story.extension == ".mp4" %}
+                                <video class="d-block w-100" controls> <source src="{{ story.file.url }}"> </video>
+                            {% else %}
+                                <img src="{{ story.file.url }}"
+                                     class="d-block w-100" alt="..." >
+                            {% endif %}
+                                <div class="carousel-caption d-none d-md-block">
+                                    <p>{{ story.text }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+                        data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+                        data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        </div>
+    {% endfor %}
+
+    <div id="wrapper" class="w-75 mx-auto mt-2">
+        <div class="d-flex flex-row">
+            <div id="add-story" class="rounded-circle bg-secondary text-center my-3 mb-5 mx-2"
+                 style="width: 8rem; height: 8rem; cursor: pointer;">
+                <p class="fs-1">+</p>
+                <p>Add new story</p>
+            </div>
+            {% for friend in friends_list %}
+                <div class="rounded-circle text-center my-3 mb-5 mx-2 story-watch"
+                     onclick="storyWatch({{ friend.id }})"
+                     style="width: 8rem; height: 8rem; cursor: pointer;
+                             background-image: url({{ friend.avatar.url }});
+                             background-repeat: no-repeat; background-size: 100%">
+                    <p style="margin-top: 8rem">{{ friend.name }} ({{ friend.tag }})</p>
+                </div>
+            {% endfor %}
+        </div>
+
         <form class="border border-dark rounded-3 p-3"
               action="{% url 'post-add' %}"
               method="post"
@@ -25,7 +102,7 @@
                        name="{{ post_form.img.name }}"
                        accept="image/*"
                        placeholder="Upload image">
-{#                {{ post_form.img }}#}
+                {#                {{ post_form.img }}#}
             </label>
             <br>
             <br>
@@ -35,7 +112,8 @@
             <div class="card px-3 py-1 pb-3 mt-2">
                 <div class="card-body">
                     <div class="d-flex flex-row">
-                        <img class="rounded-circle" style="width: 6rem; height: 6rem;" src="{{ post.user.avatar.url }}" alt="Not found...">
+                        <img class="rounded-circle" style="width: 6rem; height: 6rem;" src="{{ post.user.avatar.url }}"
+                             alt="Not found...">
                         <div class="d-flex flex-column ms-3 mt-2">
                             <h5 class="card-title">{{ post.user.name }} ({{ post.user.tag }})</h5>
                             <p class="card-text"><small class="text-muted">{{ post.post_date }}</small></p>
@@ -51,16 +129,31 @@
                          alt="Not found">
                 {% endif %}
             </div>
-
-            {% comment %}<div class="border border-dark px-3 py-1 mt-2">
-                <p> {{ post.user }} </p>
-                <p> {{ post.description }} </p>
-                {% if post.img %}
-                    <p><img style="width: 60%; height: 60%;" src="{{ post.img.url }}" alt="not found"/></p>
-                {% endif %}
-                <p> {{ post.post_date }} </p>
-                <p><a href="{% url 'post-edit' post.pk %}">Изменить</a></p>
-            </div>{% endcomment %}
         {% endfor %}
     </div>
+
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $('#add-story').click(function () {
+            $('#create-story-div').fadeTo(1000, 1);
+            $("#wrapper").css({'text-shadow': '0px 0px 10px #000'});
+        });
+        $('#close').click(function () {
+            $('#create-story-div').hide();
+            $("#wrapper").css({'text-shadow': '0px 0px 0px #000'});
+        });
+
+        function storyWatch(friend_id) {
+            $('#' + friend_id).find('.carousel-inner').children().first().addClass(' active');
+            $('#' + friend_id).fadeTo(1000, 1);
+            $("#wrapper").css({'text-shadow': '0px 0px 10px #000'});
+        }
+
+        function storyClose(friend_id) {
+            $('#'+friend_id).hide();
+            $("#wrapper").css({'text-shadow': '0px 0px 0px #000'});
+        }
+
+    </script>
 {% endblock %}

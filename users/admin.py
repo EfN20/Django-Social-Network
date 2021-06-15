@@ -36,4 +36,3 @@ class FriendRequestAdmin(admin.ModelAdmin):
 
 admin.site.register(User, UserAdmin)
 admin.site.register(FriendRequest, FriendRequestAdmin)
-admin.site.register(Media)
