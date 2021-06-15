@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -13,6 +13,8 @@ from django.views.generic import ListView, TemplateView
 from django.views.generic.edit import CreateView, UpdateView
 
 from chat.models import Room
+from medias.models import Media
+from medias.forms import MediaForm
 from posts.forms import PostForm
 from posts.models import Post
 from .forms import RegistrationForm, LoginForm
@@ -64,6 +66,20 @@ class IndexView(LoginRequiredMixin, ListView):
         context = super(IndexView, self).get_context_data(*args, **kwargs)
         form = PostForm()
         context['post_form'] = form
+        media_form = MediaForm()
+        context['story_form'] = media_form
+        date_from = datetime.now() - timedelta(days=1)
+        friends_media = Media.objects.filter(user__in=self.request.user.friend_list.all())
+        friends_id_list = Media.objects.filter(user__in=self.request.user.friend_list.all(), posted_date__gte=date_from).values_list('user').distinct()
+        print(list(friends_id_list))
+        friends_list = User.objects.filter(user_id__in=list(friends_id_list))
+        print(friends_list)
+        context['friends_stories'] = friends_media
+        for media in friends_media:
+            print(media.user)
+            print(media.extension())
+            print(media.file.url)
+        context['friends_list'] = friends_list
         return context
 
 
