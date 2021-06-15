@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.base_user import BaseUserManager
 
+from datetime import datetime
+
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -49,6 +51,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     friend_list = models.ManyToManyField('self', symmetrical=False)
     is_staff = models.BooleanField(default=False)
     last_login = models.DateTimeField(null=True)
+    is_online = models.BooleanField(default=False)
 
     objects = UserManager()
 
@@ -63,7 +66,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.avatar.delete()
         super().delete()
 
+    def last_seen_5_minutes(self):
+        return (datetime.now().astimezone() - self.last_login).total_seconds() <= 60*5
+
+    def snippet(self):
+        return self.phone_number[:5]
+
 
 class FriendRequest(models.Model):
     user_from = models.ForeignKey(User, related_name='user_from', on_delete=models.CASCADE)
     user_to = models.ForeignKey(User, related_name='user_to', on_delete=models.CASCADE)
+

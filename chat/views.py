@@ -1,14 +1,18 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.views.generic import CreateView
 
 from .models import Room, Message
+from .forms import RoomForm
 from users.models import User
 
 
 @login_required
 def chat_page(request):
+    form = RoomForm(user=request.user)
     context = {
-        "rooms": Room.objects.filter(members=request.user)
+        "rooms": Room.objects.filter(members=request.user),
+        "group_chat_form": form
     }
     return render(request, 'chat/chat-page.html', context)
 
@@ -38,15 +42,19 @@ def chat_by_id(request, room_id):
     return render(request, 'chat/single-chat.html', context)
 
 
-# def private_chat(request, to_user_id):
-#     room = Room.objects.all()
-#     ids = [request.user.id, to_user_id]
-#     for need_id in ids:
-#         room = room.filter(members__user_id=need_id)
-#     if not room:
-#         room = Room()
-#     context = {
-#         'room': room,
-#         'messages': Message.objects.filter(room=room)
-#     }
-#     return render(request, 'chat/single-chat.html', context)
+@login_required
+def create_group_chat(request):
+    print("Create group chat")
+    if request.method == 'POST':
+        form = RoomForm(request.POST, user=request.user)
+        if form.is_valid():
+            room = form.save(commit=False)
+            members_id = request.POST.getlist('members')
+            print(members_id)
+            members = User.objects.filter(user_id__in=members_id)
+            room.type = True
+            room.save()
+            room.members.set(members)
+            room.members.add(request.user)
+            room.save()
+            return redirect('chat-page')

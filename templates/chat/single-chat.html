@@ -52,7 +52,16 @@
                          </div>`;
             let new_msg = document.createElement('div');
             new_msg.className = "d-flex flex-row p-2"
-            new_msg.innerHTML = `<img class="me-2 rounded-circle" src="` + data.avatar + `" style="width: 6rem; height: 6rem;">
+            if(data.image == null) {
+                new_msg.innerHTML = `<img class="me-2 rounded-circle" src="` + data.avatar + `" style="width: 6rem; height: 6rem;">
+                            <div class="d-flex flex-column ms-2 w-75">
+                                <h5>` + data.user + `</h5>
+                                <p>` + data.message + `</p>
+                            </div>
+                            <span class="ms-auto">` + data.date + `</span>`;
+            }
+            else {
+                new_msg.innerHTML = `<img class="me-2 rounded-circle" src="` + data.avatar + `" style="width: 6rem; height: 6rem;">
                             <div class="d-flex flex-column ms-2 w-75">
                                 <h5>` + data.user + `</h5>
                                 <p>` + data.message + `<br>
@@ -60,6 +69,7 @@
                                 </p>
                             </div>
                             <span class="ms-auto">` + data.date + `</span>`;
+            }
             document.querySelector('#chat-log').append(new_msg);
         };
 

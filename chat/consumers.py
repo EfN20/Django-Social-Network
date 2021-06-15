@@ -78,7 +78,7 @@ class ChatConsumer(WebsocketConsumer):
                 {
                     'type': 'chat_message',
                     'message': new_msg.text,
-                    'image': new_msg.image.url,
+                    'image': None,
                     'user': name + " (" + tag + ")",
                     'avatar': user.avatar.url,
                     'date': new_msg.date.strftime("%d-%m-%Y %H:%M:%S")
