@@ -77,12 +77,20 @@ class UserCreationForm(forms.ModelForm):
     
 
 class UserChangeForm(forms.ModelForm):
-    password = ReadOnlyPasswordHashField()
+    # password = ReadOnlyPasswordHashField()
+    date_of_birth = forms.DateField(label='Birthday',
+                                    widget=forms.DateInput,
+                                    input_formats=settings.DATE_INPUT_FORMATS)
 
     class Meta:
         model = User
-        fields = ('name', 'tag', 'email', 'date_of_birth',
-                  'avatar', 'phone_number', 'password', 'is_superuser')
+        fields = ('name', 'tag', 'phone_number', 'email', 'date_of_birth', 'avatar')
 
-    def clean_password(self):
-        return self.initial['password']
+    def __init__(self, *args, **kwargs):
+        super(UserChangeForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control my-1'
+            visible.field.widget.attrs['placeholder'] = visible.name
+
+    # def clean_password(self):
+    #     return self.initial['password']

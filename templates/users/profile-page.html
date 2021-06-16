@@ -12,27 +12,97 @@
         </div>
         <table class="table table-hover w-50 border border-dark mx-2 h-100">
             <tbody>
-                <tr>
-                    <td>Name</td>
-                    <td>{{ user.name }}</td>
-                </tr>
-                <tr>
-                    <td>Tag</td>
-                    <td>{{ user.tag }}</td>
-                </tr>
-                <tr>
-                    <td>Phone number</td>
-                    <td>{{ user.phone_number }}</td>
-                </tr>
-                <tr>
-                    <td>Email</td>
-                    <td>{{ user.email }}</td>
-                </tr>
-                <tr>
-                    <td>Birthday</td>
-                    <td>{{ user.date_of_birth }}</td>
-                </tr>
+            <tr>
+                <td>Name</td>
+                <td>{{ user.name }}</td>
+            </tr>
+            <tr>
+                <td>Tag</td>
+                <td>{{ user.tag }}</td>
+            </tr>
+            <tr>
+                <td>Phone number</td>
+                <td>{{ user.phone_number }}</td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <td>Birthday</td>
+                <td>{{ user.date_of_birth }}</td>
+            </tr>
             </tbody>
         </table>
     </div>
+    <div id="wrapper" class="w-75 mx-auto mt-2">
+        <form id="post-create" class="border border-dark rounded-3 p-3"
+              action="{% url 'post-add' %}"
+              method="post"
+              enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-floating">
+                <textarea class="form-control" placeholder="Description here"
+                          id="{{ post_form.description.auto_id }}"
+                          name="{{ post_form.description.name }}"
+                          style="height: 20vh"></textarea>
+                <label for="floatingTextarea2">Description</label>
+            </div>
+            <br>
+            <label>
+                <input class="form-control-file" type="file"
+                       id="{{ post_form.img.auto_id }}"
+                       name="{{ post_form.img.name }}"
+                       accept="image/*"
+                       placeholder="Upload image">
+                {#                {{ post_form.img }}#}
+            </label>
+            <br>
+            <br>
+            <button id="postCreate" class="btn btn-outline-dark" type="submit">Add post</button>
+        </form>
+        {% for post in posts %}
+            <div class="card px-3 py-1 pb-3 mt-2">
+                <div class="card-body">
+                    <div class="d-flex flex-row">
+                        <img class="rounded-circle" style="width: 6rem; height: 6rem;" src="{{ post.user.avatar.url }}"
+                             alt="Not found...">
+                        <div class="d-flex flex-column ms-3 mt-2">
+                            <h5 class="card-title">{{ post.user.name }} ({{ post.user.tag }})</h5>
+                            <p class="card-text"><small class="text-muted">{{ post.post_date }}</small></p>
+                        </div>
+                        {% if post.user == user %}
+                            <a class="ms-auto" href="{% url 'post-edit' post.pk %}">Change</a>
+                        {% endif %}
+                    </div>
+                    <p class="card-text">{{ post.description }}</p>
+                </div>
+                {% if post.img %}
+                    <img class="card-img-bottom mx-auto"
+                         style="width: 80%; height: 70vh;"
+                         src="{{ post.img.url }}"
+                         alt="Not found">
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $('#post-create-form').submit(function (e) {
+            e.preventDefault();
+            let formData = new FormData();
+            formData.append('img', $('.form-control-file')[0].files[0]);
+            formData.append('description', $('.form-control').val());
+            $.ajax({
+                url: '/posts/api/create',
+                data: formData,
+                processData: false,
+                method: 'POST',
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                },
+            });
+        });
+    </script>
 {% endblock %}
