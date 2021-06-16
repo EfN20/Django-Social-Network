@@ -118,7 +118,9 @@
                             <h5 class="card-title">{{ post.user.name }} ({{ post.user.tag }})</h5>
                             <p class="card-text"><small class="text-muted">{{ post.post_date }}</small></p>
                         </div>
-                        <a class="ms-auto" href="{% url 'post-edit' post.pk %}">Изменить</a>
+                        {% if post.user == user %}
+                            <a class="ms-auto" href="{% url 'post-edit' post.pk %}">Change</a>
+                        {% endif %}
                     </div>
                     <p class="card-text">{{ post.description }}</p>
                 </div>

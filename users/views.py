@@ -17,7 +17,7 @@ from medias.models import Media
 from medias.forms import MediaForm
 from posts.forms import PostForm
 from posts.models import Post
-from .forms import RegistrationForm, LoginForm
+from .forms import RegistrationForm, LoginForm, UserChangeForm
 from .models import User, FriendRequest
 
 
@@ -41,11 +41,12 @@ class RegistrationView(CreateView):
 
 class UpdateProfile(LoginRequiredMixin, UpdateView):
     model = User
-    fields = ['name', 'tag', 'phone_number', 'date_of_birth', 'avatar']
+    # fields = ['name', 'tag', 'phone_number', 'date_of_birth', 'avatar']
+    form_class = UserChangeForm
     template_name = 'users/edit-profile.html'
 
     def get_success_url(self):
-        return reverse('index')
+        return reverse('users:profile')
 
     def get_object(self):
         return self.request.user
@@ -114,6 +115,15 @@ def logout_view(request):
 
 class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = "users/profile-page.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        posts = Post.objects.filter(user=self.request.user)
+        posts = posts.order_by('-post_date')
+        context['posts'] = posts
+        form = PostForm()
+        context['post_form'] = form
+        return context
 
 
 @login_required
