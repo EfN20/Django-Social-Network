@@ -44,11 +44,12 @@ def post_edit(request, post_id):
 @api_view(['POST'])
 def post_create(request):
     serializer = PostSerializer(data=request.data)
-    permission_classes = [permissions.IsAuthenticated]
-
+    print(vars(serializer))
     if serializer.is_valid():
-        post = serializer.save(user=request.user)
-    return Response(serializer.data)
+        post = serializer.save(user=request.user, img=request.FILES.get('img'))
+        print(vars(post))
+        return Response(serializer.data)
+    return Response(serializer.errors)
 
 
 @api_view(['POST'])
